@@ -62,6 +62,7 @@ ___
 * OpenApi
 
 ### Utilities
+* OpenApi: http://localhost:8080/api/library-manager/swagger-ui.html
 * Actuator: http://localhost:8080/api/library-manager/actuator
   * Exposed endpoints:
     * /actuator/health
