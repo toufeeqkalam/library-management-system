@@ -1,13 +1,13 @@
 ## library-management-system 📚
 Library management system is a simple Spring Boot RESTful API to perform crud functions for a given book in an inventory.
 
-This RESTful API uses a H2 in-memory datasource to create/read/update/delete books by making use of Spring JPA repositories, which allows us to rapidly implement a data access layer as it is represented by classes and objects instead of tables and records.
+This RESTful uses an H2 in-memory datasource to create/read/update/delete books by making use of Spring JPA repositories, which allows us to rapidly implement a data access layer as it is represented by classes and objects instead of tables and records.
 It was designed and developed with a Spring MVC design pattern in mind which inherits all the IoC and dependency injection features of the core Spring Framework.
 
 The MVC pattern is inherited with the dependency injection of `spring-boot-starter-parent`, and this allows us to hide logic behind 3 components which can be broken down into:
 
 1. Model - Handles all the data and business logic of an application
-   * In this case Book is the model that handles the data and underlying logic
+   * In this case Book is the model that handles the data and underlying logic.
 2. Controller - Passes information from the model to view 
    * In this case BookController handles the presentation of the underlying service.
 3. View - Handles the elements of the user interface or the representation thereof.
@@ -23,8 +23,9 @@ The MVC pattern is inherited with the dependency injection of `spring-boot-start
 
 ### Next steps
 
-1. Seperate Book Entity with DTO to minise misuse when overriding some auto-generated database fields
-2. Implement borrowing book API 
+1. Seperate Book Entity with DTO to minise misuse when overriding some auto-generated database fields.
+2. Add genre and year as a search criteria
+3. Implement borrowing book API 
 
 ___
 
@@ -60,7 +61,30 @@ ___
   * Exposed endpoints:
     * /actuator/health
     * /actuator/info
-    * /actuator/logfile
+
+### Schema Design (schema.sql)
+
+````sql
+CREATE TABLE IF NOT EXISTS BOOKS (
+    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    TITLE VARCHAR(255) NOT NULL,
+    AUTHOR VARCHAR(255) NOT NULL,
+    PUBLISHER VARCHAR(255) NOT NULL,
+    ISBN VARCHAR(255) NOT NULL,
+    QUANTITY INTEGER NOT NULL,
+    CREATED DATE DEFAULT NOW()
+);
+
+ALTER TABLE BOOKS ADD CONSTRAINT ISBN_UNIQUE UNIQUE(ISBN);
+````
+
+### Test Data (data.sql)
+
+````sql
+INSERT INTO BOOKS (TITLE, AUTHOR, PUBLISHER, ISBN, QUANTITY) VALUES ('It', 'Stephen King', 'Viking' ,'0-670-81302-8', 5);
+INSERT INTO BOOKS (TITLE, AUTHOR, PUBLISHER, ISBN, QUANTITY) VALUES ('A Game of Thrones' ,'George R. R. Martin', 'Bantam Spectra', '0-553-10354-7', 3);
+INSERT INTO BOOKS (TITLE, AUTHOR, PUBLISHER, ISBN, QUANTITY) VALUES ('The Da Vinci Code','Dan Brown', 'Doubleday' ,'0-385-50420-9', 1);
+````
 
 ### Base CRUD Endpoints:
 
