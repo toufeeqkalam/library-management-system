@@ -60,7 +60,7 @@ ___
   * Exposed endpoints:
     * /actuator/health
     * /actuator/info
-    * 
+    * /actuator/logfile
 
 ### Base CRUD Endpoints:
 
