@@ -17,9 +17,10 @@ The MVC pattern is inherited with the dependency injection of `spring-boot-start
 
 1. Seperating business logic from controllers apart from routing and delegating actions to the proper service.
 2. Leveraging bean validation, using the javax.validation to add contraints to validate input.
-3. Making use of global and custom error handlers, by throwing meaningful exceptions to the user.
-4. OpenApi implementation and annotations which allows us to make the API descriptive and well documented.
-5. Monitoring and availability - making use of the `spring-boot-starter-actuator` dependency to monitor and interact with the application.
+3. Lombok annotations - to reduce boilerplate code
+4. Making use of global and custom error handlers, by throwing meaningful exceptions to the user.
+5. OpenApi implementation and annotations which allows us to make the API descriptive and well documented.
+6. Monitoring and availability - making use of the `spring-boot-starter-actuator` dependency to monitor and interact with the application.
 
 ### Next steps
 
