@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class ApiException {
+public class ApiError {
 
     private int code;
     private String message;
