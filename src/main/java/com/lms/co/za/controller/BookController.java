@@ -84,7 +84,9 @@ public class BookController {
     @Operation(summary = "Create a new instance of a book")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Book successfully created, returns uri for new book with id param", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))}),
-            @ApiResponse(responseCode = "404", description = "No books found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))})
+            @ApiResponse(responseCode = "404", description = "No books found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))}),
+            @ApiResponse(responseCode = "409", description = "Duplicate book found for ISBN reference", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))})
+
     })
     @PostMapping(value = "/book", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createBook(@RequestBody @Valid @NotNull Book book, BindingResult bindingResult) throws DuplicateResourceException {
