@@ -4,6 +4,8 @@ server:
     context-path: /api/library-manager
 
 spring:
+  application:
+    name: library-management-system
   main:
     allow-bean-definition-overriding: false
   devtools:
@@ -30,7 +32,7 @@ spring:
 
 logging:
   file:
-    name: /apps/library-manager/library-manager.log
+    name: library-manager.log
   level:
     root: info
     web: debug
@@ -57,4 +59,3 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     operations-sorter: method
-    filter: true

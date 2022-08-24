@@ -16,10 +16,10 @@ public class ApiError {
 
     @Schema(description = "Http status code")
     private int code;
-    @Schema(description = "Error message")
-    private String message;
+    @Schema(description = "Error response")
+    private Object error;
     @Schema(description = "Web request")
     private String request;
     @Schema(description = "Time of request")
-    private LocalDateTime timestamp = LocalDateTime.now();
+    private LocalDateTime timestamp;
 }

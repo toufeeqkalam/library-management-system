@@ -1,6 +1,5 @@
 package com.lms.co.za.controller;
 
-import com.lms.co.za.exception.DuplicateResourceException;
 import com.lms.co.za.exception.ResourceNotFoundException;
 import com.lms.co.za.exception.model.ApiError;
 import com.lms.co.za.model.Book;
@@ -15,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -48,7 +46,7 @@ public class BookController {
     }
 
 
-    @Operation(summary = "Get book by author")
+    @Operation(summary = "Get book by author containing partial or full name")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Returns an array of books for given author input", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))}),
             @ApiResponse(responseCode = "404", description = "No books found for given author", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))})
@@ -86,17 +84,15 @@ public class BookController {
             @ApiResponse(responseCode = "201", description = "Book successfully created, returns uri for new book with id param", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))}),
             @ApiResponse(responseCode = "422", description = "Bean validation on incoming book", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Object.class))}),
             @ApiResponse(responseCode = "404", description = "No books found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))}),
-            @ApiResponse(responseCode = "409", description = "Duplicate book found for ISBN reference", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))})
+            @ApiResponse(responseCode = "409", description = "Constrain violation on table books i.e. ISBN reference is unique to a book", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))})
 
     })
     @PostMapping(value = "/book", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createBook(@RequestBody @Valid @NotNull Book book, BindingResult bindingResult) throws DuplicateResourceException {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity().body(bindingResult.getAllErrors());
-        } else {
-            Book newBook = this.bookService.createBook(book);
-            return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newBook.getId()).toUri()).build();
-        }
+    public ResponseEntity<?> createBook(@RequestBody @Valid @NotNull Book book) {
+        //Note-to-self: BindingResult exception is caught in globalExceptionHandler, no need to do it here.
+        Book newBook = this.bookService.createBook(book);
+        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newBook.getId()).toUri()).build();
+
     }
 
     @Operation(summary = "Update book with given id")
@@ -106,13 +102,10 @@ public class BookController {
             @ApiResponse(responseCode = "404", description = "No book found for given id", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))})
     })
     @PutMapping(value = "/book/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateBook(@PathVariable(value = "id") Long id, @Valid @RequestBody Book book, BindingResult bindingResult) throws ResourceNotFoundException {
-        if(bindingResult.hasErrors()){
-            return ResponseEntity.unprocessableEntity().body(bindingResult.getAllErrors());
-        }else {
-            Book updatedBook = this.bookService.updateBook(id, book);
-            return ResponseEntity.ok().body(updatedBook);
-        }
+    public ResponseEntity<?> updateBook(@PathVariable(value = "id") Long id, @Valid @RequestBody Book book) throws ResourceNotFoundException {
+        //Note-to-self: BindingResult exception is caught in globalExceptionHandler, no need to do it here.
+        Book updatedBook = this.bookService.updateBook(id, book);
+        return ResponseEntity.ok().body(updatedBook);
     }
 
     @Operation(summary = "Delete book with given id")

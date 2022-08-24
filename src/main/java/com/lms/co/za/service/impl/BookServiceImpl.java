@@ -1,10 +1,11 @@
 package com.lms.co.za.service.impl;
 
-import com.lms.co.za.exception.DuplicateResourceException;
 import com.lms.co.za.exception.ResourceNotFoundException;
 import com.lms.co.za.model.Book;
 import com.lms.co.za.repository.BookRepository;
 import com.lms.co.za.service.BookService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements BookService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
 
     @Autowired
     BookRepository bookRepository;
@@ -49,18 +52,16 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book createBook(Book book) throws DuplicateResourceException {
-        try {
-            return this.bookRepository.saveAndFlush(book);
-        }catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new DuplicateResourceException("Book already exists with ISBN reference: " + book.getIsbn());
-        }
+    public Book createBook(Book book) throws DataIntegrityViolationException {
+        //added unique constraint to ISBN column on the books schema, catch dataIntegrationViolationException and return via global exception handler.
+        return this.bookRepository.saveAndFlush(book);
     }
 
     @Override
     public Book updateBook(Long id, Book book) throws ResourceNotFoundException {
         Optional<Book> existingBook = this.bookRepository.findById(id);
         if(existingBook.isPresent()){
+            //!=/!"".equalIgnoreCase(val) checks not necessary as bean validation is handled at class level.
             Book updatedBook = existingBook.get();
             updatedBook.setTitle(book.getTitle());
             updatedBook.setAuthor(book.getAuthor());
