@@ -13,6 +13,10 @@ The MVC pattern is inherited with the dependency injection of `spring-boot-start
 3. View - Handles the elements of the user interface or the representation thereof.
    * In this case the Book model represents the visualization of the data model.
 
+### Reason for design
+
+The MVC design pattern, abstracts away all the tedious boiler plate of handling tasks and requests, it promotes a seperation of concern and is a quick and great way to build modularised applications. Also keeping mind its robustness in debugging as we have multiple levels in the application.
+
 ### Practices used
 
 1. Seperating business logic from controllers apart from routing and delegating actions to the proper service.
