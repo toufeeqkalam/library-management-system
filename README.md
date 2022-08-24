@@ -1,7 +1,7 @@
 ## library-management-system 📚
 Library management system is a simple Spring Boot RESTful API to perform crud functions for a given book in an inventory.
 
-This RESTful uses a H2 in-memory datasource to create/read/update/delete books by making use of Spring JPA repositories, which allows us to rapidly implement a data access layer as it is represented by classes and objects instead of tables and records.
+This RESTful API uses a H2 in-memory datasource to create/read/update/delete books by making use of Spring JPA repositories, which allows us to rapidly implement a data access layer as it is represented by classes and objects instead of tables and records.
 It was designed and developed with a Spring MVC design pattern in mind which inherits all the IoC and dependency injection features of the core Spring Framework.
 
 The MVC pattern is inherited with the dependency injection of `spring-boot-starter-parent`, and this allows us to hide logic behind 3 components which can be broken down into:
