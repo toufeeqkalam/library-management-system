@@ -51,7 +51,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book createBook(Book book) throws DuplicateResourceException {
         try {
-            return this.bookRepository.save(book);
+            return this.bookRepository.saveAndFlush(book);
         }catch (DataIntegrityViolationException dataIntegrityViolationException) {
             throw new DuplicateResourceException("Book already exists with ISBN reference: " + book.getIsbn());
         }
@@ -67,7 +67,7 @@ public class BookServiceImpl implements BookService {
             updatedBook.setPublisher(book.getPublisher());
             updatedBook.setIsbn(book.getIsbn());
             updatedBook.setQuantity(book.getQuantity());
-            return this.bookRepository.save(updatedBook);
+            return this.bookRepository.saveAndFlush(updatedBook);
         }else {
             throw new ResourceNotFoundException("No book found for id: " + id);
         }

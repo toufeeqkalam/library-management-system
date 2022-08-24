@@ -50,8 +50,8 @@ public class BookController {
 
     @Operation(summary = "Get book by author")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Book found for author", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))}),
-            @ApiResponse(responseCode = "404", description = "No book found for given author", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))})
+            @ApiResponse(responseCode = "200", description = "Returns an array of books for given author input", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))}),
+            @ApiResponse(responseCode = "404", description = "No books found for given author", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))})
     })
     @GetMapping(value = "/book/author/{author}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Book>> getBookByAuthor(@PathVariable(value = "author") @NotBlank @Size(min = 3) String author) throws ResourceNotFoundException {
@@ -84,6 +84,7 @@ public class BookController {
     @Operation(summary = "Create a new instance of a book")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Book successfully created, returns uri for new book with id param", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))}),
+            @ApiResponse(responseCode = "422", description = "Bean validation on incoming book", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Object.class))}),
             @ApiResponse(responseCode = "404", description = "No books found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))}),
             @ApiResponse(responseCode = "409", description = "Duplicate book found for ISBN reference", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))})
 
@@ -91,7 +92,7 @@ public class BookController {
     @PostMapping(value = "/book", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createBook(@RequestBody @Valid @NotNull Book book, BindingResult bindingResult) throws DuplicateResourceException {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            return ResponseEntity.unprocessableEntity().body(bindingResult.getAllErrors());
         } else {
             Book newBook = this.bookService.createBook(book);
             return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newBook.getId()).toUri()).build();
@@ -101,17 +102,22 @@ public class BookController {
     @Operation(summary = "Update book with given id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Updated book successfully", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))}),
+            @ApiResponse(responseCode = "422", description = "Bean validation on incoming book", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Object.class))}),
             @ApiResponse(responseCode = "404", description = "No book found for given id", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))})
     })
     @PutMapping(value = "/book/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateBook(@PathVariable(value = "id") Long id, @RequestBody Book book) throws ResourceNotFoundException {
-        Book updatedBook = this.bookService.updateBook(id, book);
-        return ResponseEntity.ok().body(updatedBook);
+    public ResponseEntity<?> updateBook(@PathVariable(value = "id") Long id, @Valid @RequestBody Book book, BindingResult bindingResult) throws ResourceNotFoundException {
+        if(bindingResult.hasErrors()){
+            return ResponseEntity.unprocessableEntity().body(bindingResult.getAllErrors());
+        }else {
+            Book updatedBook = this.bookService.updateBook(id, book);
+            return ResponseEntity.ok().body(updatedBook);
+        }
     }
 
     @Operation(summary = "Delete book with given id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Book found for given id", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))}),
+            @ApiResponse(responseCode = "200", description = "Book deleted for given id", content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "404", description = "No book found for given id", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))})
     })
     @DeleteMapping(value = "/book/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
