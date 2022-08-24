@@ -66,6 +66,7 @@ ___
   * Exposed endpoints:
     * /actuator/health
     * /actuator/info
+    * /actuator/logfile
 
 ### Schema Design (schema.sql)
 
